@@ -11,5 +11,5 @@ function checkm_running() {
   mv $path/"checkm.stdout" $path/checkm
   mv $path/log $path/checkm
 
-deactivate
+  deactivate
 }

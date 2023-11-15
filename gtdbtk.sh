@@ -9,7 +9,7 @@ function gtdbtk_run() {
             mkdir $path/"gtdbtk"/"gtdbtk".$i
             # shellcheck disable=SC2231
             for genomic in $path/MAGs/*/*_genomic.fna ; do
-                    mag=$(echo "$genomic" | awk -F "/" '{print $NF}' | awk -F "." '{print $1}')
+                    mag=$(echo "$genomic" | awk -F "/" '{print $NF}' | sed 's/_genomic\.fna$//')
                     echo -e "$genomic\t$mag"
             done > $path/gtdbtk/"gtdbtk".$i/"genomes.list"
             gtdbtk classify_wf --batchfile $path/gtdbtk/"gtdbtk".$i/genomes.list --out_dir $path/gtdbtk/"gtdbtk".$i --cpus 50 > $path/gtdbtk/"gtdbtk".$i/gtdbtk.$i.stdout 2> $path/gtdbtk/"gtdbtk".$i/gtdbtk.$i.stderr
@@ -18,7 +18,7 @@ function gtdbtk_run() {
   else
     mkdir "$path"/"gtdbtk"
     for genomic in "$path"/MAGs/*/*_genomic.fna ; do
-      mag=$(echo "$genomic" | awk -F "/" '{print $NF}' | awk -F "." '{print $1}')
+      mag=$(echo "$genomic" | awk -F "/" '{print $NF}' | sed 's/_genomic\.fna$//')
       echo -e "$genomic\t$mag"
     done > $path/gtdbtk/"genomes.list"
     echo $path/gtdbtk/"genomes.list"
