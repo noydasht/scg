@@ -17,11 +17,15 @@ for mag in mag_list:
     contigs_num = subprocess.check_output(f"grep -c '^>' {mag_dir}/{mag_name}_genomic.fna", shell=True, text=True).strip()
     for record in SeqIO.parse(f"{mag_dir}/{mag_name}_genomic.fna", "fasta"):
         total_bps += len(record.seq)
-    genes_num = subprocess.check_output(f"grep -c '^>' {mag_dir}/{mag_name}_genes.fna", shell=True, text=True).strip()
-    completeness = subprocess.check_output(f"awk -F'\t' '$1 ~ /{mag}/ {{print $12}}' {path}/checkm/checkm.stdout", shell=True, text=True).strip()
-    contamination = subprocess.check_output(f"awk -F'\t' '$1 ~ /{mag}/ {{print $13}}' {path}/checkm/checkm.stdout", shell=True, text=True).strip()
+    try:
+        genes_num = subprocess.check_output(f"grep -c '^>' {mag_dir}/{mag_name}_genes.fna", shell=True, text=True, encoding="utf-8").strip()
+    except subprocess.CalledProcessError as e:
+        print(f"Ignoring error for {mag_name} - Genes_Num: {e}")
+        genes_num = "N/A"
+    completeness = subprocess.check_output(f"awk -F'\t' '$1 == /{mag}/_proteins {{print $12}}' {path}/checkm/checkm.stdout", shell=True, text=True).strip()
+    contamination = subprocess.check_output(f"awk -F'\t' '$1 == /{mag}/_proteins {{print $13}}' {path}/checkm/checkm.stdout", shell=True, text=True).strip()
     checkm_version = subprocess.check_output(f"awk 'NR == 1 {{print $5}}' {path}/checkm/checkm.log", shell=True, text=True).strip()
-    gtdbtk_tax = subprocess.check_output(f"grep {mag} {path}/gtdbtk/gtdbtk.*.summary.tsv | awk -F'\t' '{{print $5}}'", shell=True, text=True).strip()
+    gtdbtk_tax = subprocess.check_output(f"grep -w {mag}_genomic {path}/gtdbtk/gtdbtk.*.summary.tsv | awk -F'\t' '{{print $2}}'", shell=True, text=True).strip()
     gtdbtk_version = subprocess.check_output(f"awk 'NR == 1 {{print $5}}' {path}/gtdbtk/gtdbtk.log", shell=True, text=True).strip()
     with open(output_file, "a") as file:
         file.write(f"{mag_name}\t{mag_dir}\t{contigs_num}\t{total_bps}\t{genes_num}\t{completeness}\t{contamination}\t{checkm_version}\t{gtdbtk_tax}\t{gtdbtk_version}\n")
