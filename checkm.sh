@@ -5,11 +5,12 @@ function checkm_running() {
 
   path=$1
   mkdir $path/"checkm_list"
-  cp "$path"/MAGs/*/*_proteins.faa $path/"checkm_list"
+  # shellcheck disable=SC2067
+  find "$path"/MAGs/ -name '*_proteins.faa' -exec ln -s {} $path/"checkm_list" \; # creating a soft link for large lists
   checkm.lineage_wf.sh $path/checkm_list $path --ncpus=30 --tab_table
   mv $path/"checkm_list" $path/checkm
   mv $path/"checkm.stdout" $path/checkm
   mv $path/log $path/checkm
-
+  rm -r $path/checkm/bins
   deactivate
 }

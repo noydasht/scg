@@ -1,3 +1,10 @@
 .idea
 .idea/
 
+utils
+utils/
+
+ncbi_download_test.py
+temp_gtdbtk.sh
+download1.sh
+assembly_summary.txt

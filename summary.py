@@ -25,7 +25,8 @@ for mag in mag_list:
     completeness = subprocess.check_output(f"awk -F'\t' '$1 == /{mag}/_proteins {{print $12}}' {path}/checkm/checkm.stdout", shell=True, text=True).strip()
     contamination = subprocess.check_output(f"awk -F'\t' '$1 == /{mag}/_proteins {{print $13}}' {path}/checkm/checkm.stdout", shell=True, text=True).strip()
     checkm_version = subprocess.check_output(f"awk 'NR == 1 {{print $5}}' {path}/checkm/checkm.log", shell=True, text=True).strip()
-    gtdbtk_tax = subprocess.check_output(f"grep -w {mag}_genomic {path}/gtdbtk/gtdbtk.*.summary.tsv | awk -F'\t' '{{print $2}}'", shell=True, text=True).strip()
+    gtdbtk_tax = subprocess.check_output(f"grep -w {mag} {path}/gtdbtk/gtdbtk.*.summary.tsv | awk -F'\t' '{{print $2}}'", shell=True, text=True).strip()
+    # gtdbtk_tax = subprocess.check_output(f"grep -w {mag}_genomic {path}/gtdbtk/gtdbtk.*.summary.tsv | awk -F'\t' '{{print $2}}'", shell=True, text=True).strip()
     gtdbtk_version = subprocess.check_output(f"awk 'NR == 1 {{print $5}}' {path}/gtdbtk/gtdbtk.log", shell=True, text=True).strip()
     with open(output_file, "a") as file:
         file.write(f"{mag_name}\t{mag_dir}\t{contigs_num}\t{total_bps}\t{genes_num}\t{completeness}\t{contamination}\t{checkm_version}\t{gtdbtk_tax}\t{gtdbtk_version}\n")
